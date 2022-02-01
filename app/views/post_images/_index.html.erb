@@ -1,0 +1,11 @@
+<% post_images.each do |image| %>
+<div>
+  <%= link_to post_image_path(image.id) do %>
+    <%= image_tag image.get_image %>
+  <% end %>
+  <p>投稿ユーザー画像: <%= image_tag  image.user.get_profile_image("70x70") %></p>
+  <p>ショップ名: <%= image.shop_name %></p>
+  <p>説明: <%= image.caption %></p>
+  <p>ユーザーネーム: <%= image.user.name %></p>
+</div>
+<% end %>

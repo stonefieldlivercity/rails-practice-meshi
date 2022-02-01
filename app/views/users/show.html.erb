@@ -1,0 +1,12 @@
+<div>
+  <h3><%= @user.name %></h3>
+  <%= image_tag @user.get_profile_image("100x100") %>
+
+  <% if @user == current_user %>
+    <%= link_to edit_user_path(@user) do %>
+      プロフィール編集
+    <% end %>
+  <% end %>
+</div>
+
+<%= render 'post_images/index', post_images: @post_images %>
