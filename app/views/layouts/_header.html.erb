@@ -1,0 +1,48 @@
+<nav class="navbar navbar-expand-lg navbar-light">
+  <div class="container">
+    <a class="navbar-brand p-3" href="/">
+      <h1>Meshitero</h1>
+    </a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown"
+                  aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNavDropdown">
+      <ul>
+      <% if user_signed_in? %>
+        <li>
+          <%= link_to user_path(current_user.id) do %>
+          マイページ
+          <% end %>
+        </li>
+        <li>
+          <%= link_to new_post_image_path do %>
+          投稿フォーム
+          <% end %>
+        </li>
+        <li>
+          <%= link_to destroy_user_session_path, method: :delete do %>
+          ログアウト
+          <% end %>
+        </li>
+      <% else %>
+        <li>
+          <%= link_to about_path do %>
+          アバウト
+          <% end %>
+        </li>
+        <li>
+          <%= link_to new_user_registration_path do %>
+          新規登録
+          <% end %>
+        </li>
+        <li>
+          <%= link_to new_user_session_path do %>
+          ログイン
+          <% end %>
+        </li>
+      <% end %>
+      </ul>
+    </div>
+  </div>
+</nav>
