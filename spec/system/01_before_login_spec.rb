@@ -14,5 +14,16 @@ describe 'ユーザーログイン前のテスト' do
       expect(current_path).to eq '/'
     end
   end
+  
+  describe 'アバウト画面のテスト' do
+    before do
+      visit '/home/about'
+    end
 
+    context '表示内容の確認' do
+      it 'URLが正しい' do
+        expect(current_path).to eq '/about'
+      end
+    end
+  end
 end
