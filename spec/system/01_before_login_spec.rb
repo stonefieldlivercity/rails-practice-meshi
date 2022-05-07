@@ -67,5 +67,121 @@ describe 'ユーザーログイン前のテスト' do
         expect(page).to have_button 'Sign up'
       end
     end
+
+    context '新規登録成功のテスト' do
+      before do
+        fill_in 'user[name]', with: Faker::Lorem.characters(number: 10)
+        fill_in 'user[email]', with: Faker::Internet.email
+        fill_in 'user[password]', with: 'password'
+        fill_in 'user[password_confirmation]', with: 'password'
+      end
+
+      it '正しく新規登録される' do
+        expect { click_button 'Sign up' }.to change(User.all, :count).by(1)
+      end
+      it '新規登録後のリダイレクト先が、新規登録できたユーザの詳細画面になっている' do
+        click_button 'Sign up'
+        expect(current_path).to eq '/post_images'
+      end
+    end
+  end
+
+  describe 'ユーザーのログインのテスト' do
+    let(:user) { create(:user) }
+
+    before do
+      visit new_user_session_path
+    end
+
+    context '表示内容の確認' do
+      it 'URLが正しい' do
+        expect(current_path).to eq '/users/sign_in'
+      end
+      it '「Log in」と表示される' do
+        expect(page).to have_content 'Log in'
+      end
+      it 'emailフォームが表示される' do
+        expect(page).to have_field 'user[email]'
+      end
+      it 'passwordフォームが表示される' do
+        expect(page).to have_field 'user[password]'
+      end
+      it 'Log inボタンが表示される' do
+        expect(page).to have_button 'Log in'
+      end
+    end
+
+    context 'ログイン成功のテスト' do
+      before do
+        fill_in 'user[email]', with: user.email
+        fill_in 'user[password]', with: user.password
+        click_button 'Log in'
+      end
+
+      it 'ログイン後のリダイレクト' do
+        expect(current_path).to eq '/post_images'
+      end
+    end
+
+    context 'ログイン失敗のテスト' do
+      before do
+        fill_in 'user[email]', with: ''
+        fill_in 'user[password]', with: ''
+        click_button 'Log in'
+      end
+
+      it 'ログインに失敗し、ログイン画面にリダイレクトされる' do
+        expect(current_path).to eq '/users/sign_in'
+      end
+    end
+  end
+
+  describe 'ログイン後のヘッダー' do
+    let(:user) { create(:user) }
+
+    before do
+      visit new_user_session_path
+      fill_in 'user[email]', with: user.email
+      fill_in 'user[password]', with: user.password
+      click_button 'Log in'
+    end
+
+    context 'ヘッダーの表示' do
+      it 'タイトルが表示される' do
+        expect(page).to have_content 'Meshitero'
+      end
+      it 'マイページリンクが表示される' do
+        expect(page).to have_link 'マイページ'
+      end
+      it '投稿リンクが表示される' do
+        expect(page).to have_link '投稿フォーム'
+      end
+      it 'log outリンクが表示される' do
+        expect(page).to have_link 'ログアウト'
+      end
+    end
+  end
+
+  describe 'ユーザログアウトのテスト' do
+    let(:user) { create(:user) }
+
+    before do
+      visit new_user_session_path
+      fill_in 'user[email]', with: user.email
+      fill_in 'user[password]', with: user.password
+      click_button 'Log in'
+      logout_link = find_all('a')[3].native.inner_text
+      logout_link = logout_link.gsub(/\n/, '').gsub(/\A\s*/, '').gsub(/\s*\Z/, '')
+      click_link logout_link
+    end
+
+    context 'ログアウト機能のテスト' do
+      it '正しくログアウトできている: ログアウト後のリダイレクト先においてAbout画面へのリンクが存在する' do
+        expect(page).to have_link '', href: '/about'
+      end
+      it 'ログアウト後のリダイレクト先が、トップになっている' do
+        expect(current_path).to eq '/'
+      end
+    end
   end
 end
